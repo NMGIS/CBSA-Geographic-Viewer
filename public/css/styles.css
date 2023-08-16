@@ -1,4 +1,73 @@
-#map {
-    width: 100%;
-    height: 100vh;  /* Or whatever height you prefer */
-}
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: #f8f9fa; /* This should be the same color as your #sidebar background color */
+  }
+  
+  #container {
+    display: flex;
+    height: 100%;
+    position: relative; /* This makes it the reference point for absolutely positioned children */
+  }
+  
+  #sidebar {
+    position: absolute;
+    z-index: 1; /* This ensures the sidebar is rendered above the map */
+    width: 320px;
+    height: calc(100% - 60px); /* This subtracts 20px from the height (10px for the top and 10px for the bottom) */
+    top: 10px; /* This moves the sidebar 10px from the top of the container */
+    bottom: 50px; /* This moves the sidebar 10px from the bottom of the container */
+    left: 10px; /* This moves the sidebar 10px from the left of the container */
+    background: #f8f9fa;
+    border-radius: 12px; /* This rounds all corners */
+    box-shadow: 0 0 10px rgba(0,0,0,0.3); /* This gives the shadow effect */
+    overflow: auto; /* This ensures the content stays within the rounded corners */
+    padding: 8px; /* Add some padding to the sidebar so the content doesn't touch the edges */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  #section1, #section2 {
+    flex: 1; /* This makes the sections equal size */
+    margin: 5px 0; /* Add some space between the sections */
+    padding: 10px;
+    box-shadow: inset 0px 0px 10px rgba(0,0,0,0.2); /* This gives the inset effect */
+    border-radius: 8px; /* This rounds the corners of the sections */
+  }
+  
+  #section1 {
+    background-color: #e0e0e0;
+  }
+  
+  #section2 {
+    background-color: #e0e0e0;
+  }
+  
+  #map {
+    flex-grow: 1;
+    position: relative;
+    height: 100%;
+  }
+  
+  #reset-button {
+    text-align: center;
+    padding: 10px;
+    background: #efcc90; /* change this to any color you want */
+    color: #000; /* change this to any color you want */
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer; /* to indicate that it's clickable */
+    border-bottom: 1px solid #999; /* separate title from the rest of the sidebar */
+    margin-bottom: 5px;
+    box-sizing: border-box; /* This makes sure that padding and border are included in element's total width and height */
+    border-radius: 8px; /* adjust this value for more or less rounded edges */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25); /* adjust this for more or less shadow */
+  }
+  
+  #section1, #section2 {
+    height: 50%;  /* Each section takes up half the height of the sidebar */
+    overflow-y: auto;  /* Content is scrollable when it overflows the element's height */
+  }
+  
+
