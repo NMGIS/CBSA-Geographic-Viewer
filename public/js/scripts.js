@@ -40,9 +40,9 @@ map.on('load', function() {
         'source-layer': 'Micropolitan_Statistical_Area-3zt3x6', // This is usually the name of your tileset
         'layout': {},
         'paint': {
-            'fill-color': '#dbcdb2',  // Another contrasting color
+            'fill-color': '#d6bee6',  // Another contrasting color
             'fill-opacity': 0.6,     // Medium opacity
-            'fill-outline-color': '#dbcdb2'  // Medium dark outline
+            'fill-outline-color': '#d6bee6'  // Medium dark outline
         }
     });
 
@@ -81,8 +81,71 @@ map.on('load', function() {
             'fill-outline-color': '#8c8c8c'  // Thin dark outline
         }
     });
-    
+    // Legend for the layers
+    const legendValues = [
+        { label: 'Metropolitan statistical area', color: '#f7d797', type: 'fill', id: 'Metro_Layer' },
+        { label: 'Micropolitan statistical area', color: '#d6bee6', type: 'fill', id: 'Micro_Layer' },
+        { label: 'Combined statistical area', color: '#57544c', type: 'square-outline', id: 'CSA_Layer' },
+        { label: 'Incorporated place', color: '#8c8c8c', type: 'fill', id: 'Place_Layer' }
+    ];
+
+    const legendEl = document.getElementById('legend');
+
+    legendValues.forEach(item => {
+        const row = document.createElement('div');
+        row.style.marginBottom = '10px';
+        row.style.display = 'flex';
+        row.style.alignItems = 'center';
+
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = true;  // Default to checked since layers are visible by default
+        checkbox.style.marginRight = '10px';
+        
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                map.setLayoutProperty(item.id, 'visibility', 'visible');
+            } else {
+                map.setLayoutProperty(item.id, 'visibility', 'none');
+            }
+        });
+        row.appendChild(checkbox);
+        
+
+        if(item.type === 'fill') {
+            const colorBox = document.createElement('div');
+            colorBox.style.backgroundColor = item.color;
+            colorBox.style.width = '20px';
+            colorBox.style.height = '20px';
+            colorBox.style.display = 'inline-block';
+            colorBox.style.marginRight = '10px';
+            row.appendChild(colorBox);
+        } else if(item.type === 'line') {
+            const lineBox = document.createElement('div');
+            lineBox.style.borderTop = '3px solid ' + item.color;
+            lineBox.style.width = '20px';
+            lineBox.style.marginRight = '10px';
+            row.appendChild(lineBox);
+        } else if(item.type === 'square-outline') {
+            const squareBox = document.createElement('div');
+            squareBox.style.border = '2px solid ' + item.color;
+            squareBox.style.width = '16px';
+            squareBox.style.height = '16px';
+            squareBox.style.marginRight = '10px';
+            row.appendChild(squareBox);
+        }
+
+        const valueLabel = document.createTextNode(item.label);
+        row.appendChild(valueLabel);
+
+        legendEl.appendChild(row);
+    });
+
+
 });
+
+
 
 // Add click event to the reset button
 document.getElementById('reset-button').addEventListener('click', function() {
