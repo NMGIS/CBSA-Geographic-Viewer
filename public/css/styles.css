@@ -1,104 +1,132 @@
 body, html {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background: #f8f9fa; /* This should be the same color as your #sidebar background color */
-  }
-  
-#container {
-  display: flex;
   height: 100%;
-  position: relative; /* This makes it the reference point for absolutely positioned children */
+  margin: 0;
+  padding: 0;
+  background: #f8f9fa; /* This should be the same color as your #sidebar background color */
+}
+
+#container {
+display: flex;
+height: 100%;
+position: relative; /* This makes it the reference point for absolutely positioned children */
 }
 
 #sidebar {
-  position: absolute;
-  z-index: 1; /* This ensures the sidebar is rendered above the map */
-  width: 320px;
-  height: calc(100% - 60px); /* This subtracts 20px from the height (10px for the top and 10px for the bottom) */
-  top: 10px; /* This moves the sidebar 10px from the top of the container */
-  bottom: 50px; /* This moves the sidebar 10px from the bottom of the container */
-  left: 10px; /* This moves the sidebar 10px from the left of the container */
-  background: #f8f9fa;
-  border-radius: 12px; /* This rounds all corners */
-  box-shadow: 0 0 10px rgba(0,0,0,0.3); /* This gives the shadow effect */
-  overflow: auto; /* This ensures the content stays within the rounded corners */
-  padding: 8px; /* Add some padding to the sidebar so the content doesn't touch the edges */
-  display: flex;
-  flex-direction: column;
+position: absolute;
+z-index: 1; /* This ensures the sidebar is rendered above the map */
+width: 320px;
+height: calc(100% - 60px); /* This subtracts 20px from the height (10px for the top and 10px for the bottom) */
+top: 10px; /* This moves the sidebar 10px from the top of the container */
+bottom: 50px; /* This moves the sidebar 10px from the bottom of the container */
+left: 10px; /* This moves the sidebar 10px from the left of the container */
+background: #f8f9fa;
+border-radius: 12px; /* This rounds all corners */
+box-shadow: 0 0 10px rgba(0,0,0,0.3); /* This gives the shadow effect */
+overflow: auto; /* This ensures the content stays within the rounded corners */
+padding: 8px; /* Add some padding to the sidebar so the content doesn't touch the edges */
+display: flex;
+flex-direction: column;
 }
 
 #section1, #section2 {
-  flex: 1; /* This makes the sections equal size */
-  margin: 5px 0; /* Add some space between the sections */
-  padding: 10px;
-  box-shadow: inset 0px 0px 10px rgba(0,0,0,0.2); /* This gives the inset effect */
-  border-radius: 8px; /* This rounds the corners of the sections */
+flex: 1; /* This makes the sections equal size */
+margin: 5px 0; /* Add some space between the sections */
+padding: 10px;
+box-shadow: inset 0px 0px 10px rgba(0,0,0,0.2); /* This gives the inset effect */
+border-radius: 8px; /* This rounds the corners of the sections */
 }
 
 #section1 {
-  background-color: #e0e0e0;
+background-color: #e0e0e0;
+display: flex;
+flex-direction: column;
+flex-wrap: wrap;
+}
+
+.state-button {
+width: 100px;
+height: 40px;
 }
 
 #section2 {
-  background-color: #e0e0e0;
+background-color: #e0e0e0;
 }
 
 #legend {
-  position: absolute;
-  z-index: 1;
-  height: auto;
-  align-content: center;
-  justify-content: flex-start;
-  align-items: flex-start;
-  width: 280px;
-  top: 10px;
-  right: 10px;
-  background: #f8f9fa;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
-  overflow: auto;
-  padding-top: 8px;
-  padding-left: 8px;
-  padding-right: 8px;
-  display: flex;
-  flex-direction: column;
-  font-family: 'Gotham', sans-serif;
+position: absolute;
+z-index: 1;
+height: auto;
+align-content: center;
+justify-content: flex-start;
+align-items: flex-start;
+width: 280px;
+top: 10px;
+right: 10px;
+background: #f8f9fa;
+border-radius: 12px;
+box-shadow: 0 0 10px rgba(0,0,0,0.3);
+overflow: auto;
+padding-top: 8px;
+padding-left: 8px;
+padding-right: 8px;
+display: flex;
+flex-direction: column;
+font-family: 'Gotham', sans-serif;
 }
 
 
 #map {
-  flex-grow: 1;
-  position: relative;
-  height: 100%;
+flex-grow: 1;
+position: relative;
+height: 100%;
 }
 
 #reset-button {
-  text-align: center;
-  padding: 10px;
-  font-family: 'Gotham Black', sans-serif;
-  text-shadow: 1px 1px 3px rgb(255, 255, 255);
-  background: linear-gradient(135deg, #f7d797, #d97759); /* vibrant gradient */
-  color: #2b2b2b;
-  font-size: 20px;
-  font-weight: bolder;
-  cursor: pointer;
-  border: none; /* removing the border for a cleaner look */
-  margin-bottom: 5px;
-  box-sizing: border-box;
-  border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25); /* enhanced shadow */
-  transition: all 0.3s ease; /* smooth transition for all effects */
+text-align: center;
+padding: 10px;
+font-family: 'Gotham Black', sans-serif;
+text-shadow: 1px 1px 3px rgb(255, 255, 255);
+background: linear-gradient(135deg, #f7d797, #d97759); /* vibrant gradient */
+color: #2b2b2b;
+font-size: 20px;
+font-weight: bolder;
+cursor: pointer;
+border: none; /* removing the border for a cleaner look */
+margin-bottom: 5px;
+box-sizing: border-box;
+border-radius: 8px;
+box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25); /* enhanced shadow */
+transition: all 0.3s ease; /* smooth transition for all effects */
 }
 
 #reset-button:hover {
-  background: linear-gradient(115deg, #f7d797, #d97759); /* slightly adjusted gradient on hover */
-  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3); /* enhanced shadow on hover */
-  transform: translateY(-2px); /* slight upward shift on hover */
+background: linear-gradient(115deg, #f7d797, #d97759); /* slightly adjusted gradient on hover */
+box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3); /* enhanced shadow on hover */
+transform: translateY(-2px); /* slight upward shift on hover */
 }
 
 #section1, #section2 {
-  height: 50%;  /* Each section takes up half the height of the sidebar */
-  overflow-y: auto;  /* Content is scrollable when it overflows the element's height */
+height: 50%;  /* Each section takes up half the height of the sidebar */
+overflow-y: auto;  /* Content is scrollable when it overflows the element's height */
 }
 
+
+#state-selector {
+margin: 5px 0; 
+padding: 10px;
+box-shadow: inset 0px 0px 10px rgba(0,0,0,0.2); 
+border-radius: 8px; 
+background-color: #e0e0e0;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+#state-dropdown {
+width: 60%; 
+padding: 5px;
+border-radius: 5px;
+border: 1px solid #b0b0b0;
+background-color: #f8f9fa;
+font-family: 'Gotham', sans-serif;
+}

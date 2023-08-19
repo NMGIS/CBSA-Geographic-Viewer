@@ -24,7 +24,7 @@ map.on('load', function() {
         'paint': {
             'fill-color': '#f7d797',  // Contrasting color
             'fill-opacity': 0.7,     // Medium-high opacity
-            'fill-outline-color': '#f7d797'  // Thin or medium dark outline
+            'fill-outline-color': '#4f4e4d'  // Thin or medium dark outline
         }
     });
 
@@ -42,7 +42,7 @@ map.on('load', function() {
         'paint': {
             'fill-color': '#d97759',  // Another contrasting color
             'fill-opacity': 0.6,     // Medium opacity
-            'fill-outline-color': '#d97759'  // Medium dark outline
+            'fill-outline-color': '#4f4e4d'  // Medium dark outline
         }
     });
 
@@ -81,6 +81,26 @@ map.on('load', function() {
             'fill-outline-color': '#8c8c8c'  // Thin dark outline
         }
     });
+    // Add the StatesSimple.geojson source
+    map.addSource('StatesSimple', {
+        'type': 'geojson',
+        'data': './layers/StatesSimple.geojson'  // Assuming the geojson file is located in a directory named "layers"
+    });
+
+    // Add the layer for StatesSimple
+    map.addLayer({
+        'id': 'StatesSimple_Layer',
+        'type': 'fill',  // This can be changed based on the type of geometries in the geojson
+        'source': 'StatesSimple',
+        'layout': {
+            'visibility': 'none'  // This will ensure the layer is not visible
+        },
+        'paint': {
+            'fill-color': '#000000',  // Dummy value since it's invisible
+            'fill-opacity': 0  // Fully transparent
+        }
+    });
+    
     // Legend for the layers
     const legendValues = [
         { label: 'Metropolitan statistical area', color: '#f7d797', type: 'fill', id: 'Metro_Layer' },
@@ -151,3 +171,36 @@ document.getElementById('reset-button').addEventListener('click', function() {
     location.reload();
 });
 
+// Populate state dropdown and add event listener for state selection
+fetch('./layers/StatesSimple.geojson')
+.then(response => response.json())
+.then(data => {
+    const features = data.features;
+    const stateDropdown = document.getElementById('state-dropdown');
+
+    // Add a default option
+    const defaultOption = document.createElement('option');
+    defaultOption.innerText = 'Select a state...';
+    defaultOption.value = '';
+    stateDropdown.appendChild(defaultOption);
+
+    features.forEach(function(feature) {
+        const stateName = feature.properties.NAME;
+        const option = document.createElement('option');
+        option.innerText = stateName;
+        option.value = JSON.stringify(feature); // Store the feature as string in the option's value
+        stateDropdown.appendChild(option);
+    });
+
+    // Add an event listener to the dropdown
+    stateDropdown.addEventListener('change', function() {
+        if (this.value) {
+            const feature = JSON.parse(this.value);
+            const bbox = turf.bbox(feature);
+            map.fitBounds(bbox, { padding: { top: 10, bottom: 10, left: 300, right: 10 } });
+        }
+    });
+})
+.catch(error => {
+    console.error('Error fetching the geojson:', error);
+});
