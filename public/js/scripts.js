@@ -40,9 +40,9 @@ map.on('load', function() {
         'source-layer': 'Micropolitan_Statistical_Area-3zt3x6', // This is usually the name of your tileset
         'layout': {},
         'paint': {
-            'fill-color': '#d6bee6',  // Another contrasting color
+            'fill-color': '#d97759',  // Another contrasting color
             'fill-opacity': 0.6,     // Medium opacity
-            'fill-outline-color': '#d6bee6'  // Medium dark outline
+            'fill-outline-color': '#d97759'  // Medium dark outline
         }
     });
 
@@ -84,7 +84,7 @@ map.on('load', function() {
     // Legend for the layers
     const legendValues = [
         { label: 'Metropolitan statistical area', color: '#f7d797', type: 'fill', id: 'Metro_Layer' },
-        { label: 'Micropolitan statistical area', color: '#d6bee6', type: 'fill', id: 'Micro_Layer' },
+        { label: 'Micropolitan statistical area', color: '#d97759', type: 'fill', id: 'Micro_Layer' },
         { label: 'Combined statistical area', color: '#57544c', type: 'square-outline', id: 'CSA_Layer' },
         { label: 'Incorporated place', color: '#8c8c8c', type: 'fill', id: 'Place_Layer' }
     ];
@@ -147,12 +147,7 @@ map.on('load', function() {
 
 
 
-// Add click event to the reset button
 document.getElementById('reset-button').addEventListener('click', function() {
-    map.flyTo({
-    center: [-98, 39], // starting position [lng, lat]
-    zoom: 5 // starting zoom
-    });
-  });
-  
+    location.reload();
+});
 
