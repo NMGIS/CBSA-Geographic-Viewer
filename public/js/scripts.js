@@ -22,9 +22,13 @@ map.on('load', function() {
         'source': 'Metro_GeoJSON',
         'layout': {},
         'paint': {
-            'fill-color': '#f7d797',  // Contrasting color
-            'fill-opacity': 0.7,     // Medium-high opacity
-            'fill-outline-color': '#4f4e4d'  // Thin or medium dark outline
+            'fill-color': ['case',
+                ['boolean', ['feature-state', 'clicked'], false],
+                '#38F6F3',  // Color to use when the feature is clicked
+                '#f7d797'  // Default color
+            ],
+            'fill-opacity': 0.7,
+            'fill-outline-color': '#4f4e4d'
         }
     });
 
@@ -36,13 +40,17 @@ map.on('load', function() {
 
     map.addLayer({
         'id': 'Micro_GeoJSON_Layer',
-        'type': 'fill', // Can be 'fill', 'line', 'circle', 'symbol', etc. based on your data
+        'type': 'fill',
         'source': 'Micro_GeoJSON',
         'layout': {},
         'paint': {
-            'fill-color': '#d97759',  // Another contrasting color
-            'fill-opacity': 0.6,     // Medium opacity
-            'fill-outline-color': '#4f4e4d'  // Medium dark outline
+            'fill-color': ['case',
+                ['boolean', ['feature-state', 'clicked'], false],
+                '#38F6F3',  // Color to use when the feature is clicked
+                '#d97759'   // Default color
+            ],
+            'fill-opacity': 0.6,
+            'fill-outline-color': '#4f4e4d'
         }
     });
 
@@ -58,11 +66,14 @@ map.on('load', function() {
         'source': 'CSA_GeoJSON',
         'layout': {},
         'paint': {
-            'line-color': '#57544c', 
-            'line-width': 2,  
+            'line-color': ['case',
+                ['boolean', ['feature-state', 'clicked'], false],
+                '#38F6F3',  // Color to use when the feature is clicked
+                '#4f4e4d'   // Default color
+            ],
+            'line-width': 2
         }
     });
-    
     map.addLayer({
         'id': 'CSA_GeoJSON_Labels',
         'type': 'symbol',
@@ -186,7 +197,7 @@ map.on('load', function() {
 });
 
 
-
+// reset button
 document.getElementById('reset-button').addEventListener('click', function() {
     location.reload();
 });
@@ -225,3 +236,68 @@ fetch('./layers/StatesSimple.geojson')
     console.error('Error fetching the geojson:', error);
 });
 
+
+
+let previousFeature = null;  // Store the entire previous feature instead of just its ID
+
+map.on('click', function(e) {
+    const features = map.queryRenderedFeatures(e.point, {
+        layers: ['Metro_GeoJSON_Layer', 'Micro_GeoJSON_Layer', 'CSA_GeoJSON_Layer']
+    });
+
+    if (features.length) {
+        const clickedFeature = features[0];
+
+        if (previousFeature && previousFeature.id === clickedFeature.id) {
+            // The same feature was clicked again, unselect it
+            clearSidebar();
+            unhighlightFeature(previousFeature);
+            previousFeature = null;
+        } else {
+            // A different feature was clicked
+            if (previousFeature) {
+                // Unhighlight the previously clicked feature
+                unhighlightFeature(previousFeature);
+            }
+            
+            // Highlight the new feature
+            highlightFeature(clickedFeature);
+            populateSidebar(clickedFeature);
+            previousFeature = clickedFeature;
+        }
+    }
+});
+
+function highlightFeature(feature) {
+    map.setFeatureState(
+        { source: feature.source, sourceLayer: feature.sourceLayer, id: feature.id },
+        { clicked: true }
+    );
+}
+
+function unhighlightFeature(feature) {
+    map.setFeatureState(
+        { source: feature.source, sourceLayer: feature.sourceLayer, id: feature.id },
+        { clicked: false }
+    );
+}
+
+function clearSidebar() {
+    const section1 = document.getElementById('section1');
+    section1.innerHTML = '';
+}
+
+
+
+function populateSidebar(feature) {
+    const section1 = document.getElementById('section1');
+    section1.innerHTML = '';  // Clear any previous content
+    
+    // Assuming your features have a property named 'name' as an example
+    const featureName = feature.properties.NAME; 
+    const nameElement = document.createElement('h3');
+    nameElement.innerText = featureName;
+    section1.appendChild(nameElement);
+    
+    // Add more properties as needed...
+}
