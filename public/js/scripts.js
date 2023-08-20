@@ -67,7 +67,7 @@ map.on('load', function() {
         'paint': {
             'fill-color': ['case',
                 ['boolean', ['feature-state', 'clicked'], false],
-                '#38F6F3',  // Color to use when the feature is clicked
+                'transparent',  // Set to transparent when the feature is clicked
                 'transparent'   // Default color
             ],
             'fill-outline-color': 'transparent'
@@ -84,7 +84,11 @@ map.on('load', function() {
                 '#38F6F3',  // Color to use when the feature is clicked
                 '#4f4e4d'   // Default color
             ],
-            'line-width': 2
+            'line-width': ['case',
+                ['boolean', ['feature-state', 'clicked'], false],
+                3,  // Increase line width when the feature is clicked
+                2   // Default width
+            ]
         }
     });
     map.addLayer({
@@ -250,7 +254,6 @@ fetch('./layers/StatesSimple.geojson')
 });
 
 
-
 // selecting features
 let previousFeature = null;  // Store the entire previous feature instead of just its ID
 
@@ -305,16 +308,75 @@ function clearSidebar() {
 }
 
 
-// Populate sidebar based on feature selection
 function populateSidebar(feature) {
+    // Clear all sections first
     const section1 = document.getElementById('section1');
-    section1.innerHTML = '';  // Clear any previous content
-    
-    // Assuming your features have a property named 'name' as an example
+    const section2 = document.getElementById('section2');
+    const section3 = document.getElementById('section3');
+    section1.innerHTML = '';
+    section2.innerHTML = '';
+    section3.innerHTML = '';
+
+    let section;
+    switch (feature.layer.id) {
+        case 'CSA_GeoJSON_Fill':
+            section = section1;
+            // Lookup related Metro features using the CSAFP field
+            const relatedMetroFeatures = map.querySourceFeatures('Metro_GeoJSON', {
+                filter: ['==', 'CSAFP', feature.properties.CSAFP]
+            });
+            const uniqueMetroNames = [...new Set(relatedMetroFeatures.map(f => f.properties.NAME))];
+            if (uniqueMetroNames.length) {
+                section2.innerHTML = '';  // Clear any previous content
+                const nameElementMetro = document.createElement('h3');
+                nameElementMetro.innerText = uniqueMetroNames.join(', ');
+                section2.appendChild(nameElementMetro);
+            }
+            // Lookup related Micro features using the CSAFP field
+            const relatedMicroFeatures = map.querySourceFeatures('Micro_GeoJSON', {
+                filter: ['==', 'CSAFP', feature.properties.CSAFP]
+            });
+            const uniqueMicroNames = [...new Set(relatedMicroFeatures.map(f => f.properties.NAME))];
+            if (uniqueMicroNames.length) {
+                section3.innerHTML = '';  // Clear any previous content
+                const nameElementMicro = document.createElement('h3');
+                nameElementMicro.innerText = uniqueMicroNames.join(', ');
+                section3.appendChild(nameElementMicro);
+            }
+            break;
+        case 'Metro_GeoJSON_Layer':
+            section = section2;
+            // Lookup the corresponding CSA feature using the CSAFP field
+            const csaFeatureMetro = map.querySourceFeatures('CSA_GeoJSON', {
+                filter: ['==', 'CSAFP', feature.properties.CSAFP]
+            })[0];
+            if (csaFeatureMetro) {
+                const nameElementCSA = document.createElement('h3');
+                nameElementCSA.innerText = csaFeatureMetro.properties.NAME;
+                section1.appendChild(nameElementCSA);
+            }
+            break;
+        case 'Micro_GeoJSON_Layer':
+            section = section3;
+            // Lookup the corresponding CSA feature using the CSAFP field
+            const csaFeatureMicro = map.querySourceFeatures('CSA_GeoJSON', {
+                filter: ['==', 'CSAFP', feature.properties.CSAFP]
+            })[0];
+            if (csaFeatureMicro) {
+                const nameElementCSA = document.createElement('h3');
+                nameElementCSA.innerText = csaFeatureMicro.properties.NAME;
+                section1.appendChild(nameElementCSA);
+            }
+            break;
+        default:
+            return;
+    }
+
     const featureName = feature.properties.NAME; 
     const nameElement = document.createElement('h3');
     nameElement.innerText = featureName;
-    section1.appendChild(nameElement);
-    
-    // Add more properties as needed...
+    section.appendChild(nameElement);
 }
+
+
+
