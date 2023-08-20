@@ -86,7 +86,7 @@ map.on('load', function() {
             ],
             'line-width': ['case',
                 ['boolean', ['feature-state', 'clicked'], false],
-                3,  // Increase line width when the feature is clicked
+                6,  // Increase line width when the feature is clicked
                 2   // Default width
             ]
         }
@@ -95,7 +95,7 @@ map.on('load', function() {
         'id': 'CSA_GeoJSON_Labels',
         'type': 'symbol',
         'source': 'CSA_GeoJSON',
-        'minzoom': 7,
+        'minzoom': 6,
         'layout': {
             'text-field': ['get', 'NAME'],
             'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
@@ -328,9 +328,11 @@ function populateSidebar(feature) {
             const uniqueMetroNames = [...new Set(relatedMetroFeatures.map(f => f.properties.NAME))];
             if (uniqueMetroNames.length) {
                 section2.innerHTML = '';  // Clear any previous content
-                const nameElementMetro = document.createElement('h3');
-                nameElementMetro.innerText = uniqueMetroNames.join(', ');
-                section2.appendChild(nameElementMetro);
+                uniqueMetroNames.forEach(name => {
+                    const nameElementMetro = document.createElement('h3');
+                    nameElementMetro.innerText = name;
+                    section2.appendChild(nameElementMetro);
+                });
             }
             // Lookup related Micro features using the CSAFP field
             const relatedMicroFeatures = map.querySourceFeatures('Micro_GeoJSON', {
@@ -339,9 +341,11 @@ function populateSidebar(feature) {
             const uniqueMicroNames = [...new Set(relatedMicroFeatures.map(f => f.properties.NAME))];
             if (uniqueMicroNames.length) {
                 section3.innerHTML = '';  // Clear any previous content
-                const nameElementMicro = document.createElement('h3');
-                nameElementMicro.innerText = uniqueMicroNames.join(', ');
-                section3.appendChild(nameElementMicro);
+                uniqueMicroNames.forEach(name => {
+                    const nameElementMicro = document.createElement('h3');
+                    nameElementMicro.innerText = name;
+                    section3.appendChild(nameElementMicro);
+                });
             }
             break;
         case 'Metro_GeoJSON_Layer':
