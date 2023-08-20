@@ -59,7 +59,20 @@ map.on('load', function() {
         'data': './layers/CSA.geojson',
         'maxzoom': 5
     });
-    
+    map.addLayer({
+        'id': 'CSA_GeoJSON_Fill',
+        'type': 'fill',
+        'source': 'CSA_GeoJSON',
+        'layout': {},
+        'paint': {
+            'fill-color': ['case',
+                ['boolean', ['feature-state', 'clicked'], false],
+                '#38F6F3',  // Color to use when the feature is clicked
+                'transparent'   // Default color
+            ],
+            'fill-outline-color': 'transparent'
+        }
+    });
     map.addLayer({
         'id': 'CSA_GeoJSON_Layer',
         'type': 'line',
@@ -74,17 +87,6 @@ map.on('load', function() {
             'line-width': 2
         }
     });
-    map.addLayer({
-        'id': 'CSA_GeoJSON_Fill',
-        'type': 'fill',
-        'source': 'CSA_GeoJSON',
-        'layout': {},
-        'paint': {
-            'fill-color': 'transparent',
-            'fill-outline-color': 'transparent'
-        }
-    });
-
     map.addLayer({
         'id': 'CSA_GeoJSON_Labels',
         'type': 'symbol',
@@ -303,7 +305,7 @@ function clearSidebar() {
 }
 
 
-
+// Populate sidebar based on feature selection
 function populateSidebar(feature) {
     const section1 = document.getElementById('section1');
     section1.innerHTML = '';  // Clear any previous content
