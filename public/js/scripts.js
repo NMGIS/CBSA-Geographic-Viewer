@@ -10,16 +10,16 @@ const map = new mapboxgl.Map({
 
 map.on('load', function() {
     
-    map.addSource('Metro', {
-        'type': 'vector',
-        'url': 'mapbox://nmgis.8bzh59zu'
+    map.addSource('Metro_GeoJSON', {
+        'type': 'geojson',
+        'data': './layers/Metro.geojson',
+        'maxzoom': 5
     });
 
     map.addLayer({
-        'id': 'Metro_Layer',
+        'id': 'Metro_GeoJSON_Layer',
         'type': 'fill', // Can be 'fill', 'line', 'circle', 'symbol', etc. based on your data
-        'source': 'Metro',
-        'source-layer': 'Metropolitan_Statistical_Area-1sl8an', // This is usually the name of your tileset
+        'source': 'Metro_GeoJSON',
         'layout': {},
         'paint': {
             'fill-color': '#f7d797',  // Contrasting color
@@ -28,16 +28,16 @@ map.on('load', function() {
         }
     });
 
-    map.addSource('Micro', {
-        'type': 'vector',
-        'url': 'mapbox://nmgis.8675zfmi'
+    map.addSource('Micro_GeoJSON', {
+        'type': 'geojson',
+        'data': './layers/Micro.geojson',
+        'maxzoom': 5
     });
 
     map.addLayer({
-        'id': 'Micro_Layer',
+        'id': 'Micro_GeoJSON_Layer',
         'type': 'fill', // Can be 'fill', 'line', 'circle', 'symbol', etc. based on your data
-        'source': 'Micro',
-        'source-layer': 'Micropolitan_Statistical_Area-3zt3x6', // This is usually the name of your tileset
+        'source': 'Micro_GeoJSON',
         'layout': {},
         'paint': {
             'fill-color': '#d97759',  // Another contrasting color
@@ -123,8 +123,8 @@ map.on('load', function() {
     
     // Legend for the layers
     const legendValues = [
-        { label: 'Metropolitan statistical area', color: '#f7d797', type: 'fill', id: 'Metro_Layer' },
-        { label: 'Micropolitan statistical area', color: '#d97759', type: 'fill', id: 'Micro_Layer' },
+        { label: 'Metropolitan statistical area', color: '#f7d797', type: 'fill', id: 'Metro_GeoJSON_Layer' },
+        { label: 'Micropolitan statistical area', color: '#d97759', type: 'fill', id: 'Micro_GeoJSON_Layer' },
         { label: 'Combined statistical area', color: '#57544c', type: 'square-outline', id: 'CSA_GeoJSON_Layer' },
         { label: 'Incorporated place', color: '#8c8c8c', type: 'fill', id: 'Place_Layer' }
     ];
