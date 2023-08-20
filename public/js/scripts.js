@@ -46,22 +46,41 @@ map.on('load', function() {
         }
     });
 
-    map.addSource('CSA', {
-        'type': 'vector',
-        'url': 'mapbox://nmgis.5yeqsljb'
+    map.addSource('CSA_GeoJSON', {
+        'type': 'geojson',
+        'data': './layers/CSA.geojson',
+        'maxzoom': 5
     });
     
     map.addLayer({
-        'id': 'CSA_Layer',
-        'type': 'line',  // Change from 'fill' to 'line'
-        'source': 'CSA',
-        'source-layer': 'Combined_Statistical_Area-8s87ox',
+        'id': 'CSA_GeoJSON_Layer',
+        'type': 'line',
+        'source': 'CSA_GeoJSON',
         'layout': {},
         'paint': {
             'line-color': '#57544c', 
             'line-width': 2,  
         }
-    }); 
+    });
+    
+    map.addLayer({
+        'id': 'CSA_GeoJSON_Labels',
+        'type': 'symbol',
+        'source': 'CSA_GeoJSON',
+        'minzoom': 7,
+        'layout': {
+            'text-field': ['get', 'NAME'],
+            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+            'text-size': 12,
+        },
+        'paint': {
+            'text-color': '#000',
+            'text-halo-color': '#fff',
+            'text-halo-width': 1
+        }
+    });
+
+
     map.addSource('Place', {
         'type': 'vector',
         'url': 'mapbox://nmgis.59eos659'
@@ -101,11 +120,12 @@ map.on('load', function() {
         }
     });
     
+    
     // Legend for the layers
     const legendValues = [
         { label: 'Metropolitan statistical area', color: '#f7d797', type: 'fill', id: 'Metro_Layer' },
         { label: 'Micropolitan statistical area', color: '#d97759', type: 'fill', id: 'Micro_Layer' },
-        { label: 'Combined statistical area', color: '#57544c', type: 'square-outline', id: 'CSA_Layer' },
+        { label: 'Combined statistical area', color: '#57544c', type: 'square-outline', id: 'CSA_GeoJSON_Layer' },
         { label: 'Incorporated place', color: '#8c8c8c', type: 'fill', id: 'Place_Layer' }
     ];
 
@@ -204,3 +224,4 @@ fetch('./layers/StatesSimple.geojson')
 .catch(error => {
     console.error('Error fetching the geojson:', error);
 });
+
