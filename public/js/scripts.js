@@ -75,6 +75,17 @@ map.on('load', function() {
         }
     });
     map.addLayer({
+        'id': 'CSA_GeoJSON_Fill',
+        'type': 'fill',
+        'source': 'CSA_GeoJSON',
+        'layout': {},
+        'paint': {
+            'fill-color': 'transparent',
+            'fill-outline-color': 'transparent'
+        }
+    });
+
+    map.addLayer({
         'id': 'CSA_GeoJSON_Labels',
         'type': 'symbol',
         'source': 'CSA_GeoJSON',
@@ -238,15 +249,19 @@ fetch('./layers/StatesSimple.geojson')
 
 
 
+// selecting features
 let previousFeature = null;  // Store the entire previous feature instead of just its ID
 
 map.on('click', function(e) {
     const features = map.queryRenderedFeatures(e.point, {
-        layers: ['Metro_GeoJSON_Layer', 'Micro_GeoJSON_Layer', 'CSA_GeoJSON_Layer']
+        layers: ['Metro_GeoJSON_Layer', 'Micro_GeoJSON_Layer', 'CSA_GeoJSON_Fill']
     });
 
     if (features.length) {
-        const clickedFeature = features[0];
+        // Check if any of the features are from the CSA fill layer
+        const csaFeature = features.find(f => f.layer.id === 'CSA_GeoJSON_Fill');
+        const clickedFeature = csaFeature || features[0];
+
 
         if (previousFeature && previousFeature.id === clickedFeature.id) {
             // The same feature was clicked again, unselect it
