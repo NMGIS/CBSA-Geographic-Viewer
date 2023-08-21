@@ -120,12 +120,17 @@ map.on('load', function() {
         'source': 'Place',
         'source-layer': 'Incorporated_Place_Related-1qqx0j', // This is usually the name of your tileset
         'layout': {},
-        'minzoom': 7,  // The layer will become visible starting at this zoom level
+        'minzoom': 5,  // The layer will become visible starting at this zoom level
         'maxzoom': 22, // The layer will become invisible after this zoom level
         'paint': {
-            'fill-color': '#8c8c8c',  // Bright color
-            'fill-opacity': 0.7,     // High opacity
-            'fill-outline-color': '#8c8c8c'  // Thin dark outline
+            'fill-color': [
+                'case',
+                ['boolean', ['feature-state', 'clicked'], false],
+                '#38F6F3',  // Color when clicked (change this to your preferred highlight color)
+                '#8c8c8c'   // Default color
+            ],
+            'fill-opacity': 0.7,
+            'fill-outline-color': '#8c8c8c'
         }
     });
     // Add the StatesSimple.geojson source
@@ -259,7 +264,7 @@ let previousFeature = null;  // Store the entire previous feature instead of jus
 
 map.on('click', function(e) {
     const features = map.queryRenderedFeatures(e.point, {
-        layers: ['Metro_GeoJSON_Layer', 'Micro_GeoJSON_Layer', 'CSA_GeoJSON_Fill']
+        layers: ['Metro_GeoJSON_Layer', 'Micro_GeoJSON_Layer', 'CSA_GeoJSON_Fill', 'Place_Layer']
     });
 
     if (features.length) {
@@ -376,6 +381,8 @@ function populateSidebar(feature) {
                 nameElementCSA.innerText = csaFeatureMicro.properties.NAME;
                 section1.appendChild(nameElementCSA);
             }
+        
+            
             break;
         default:
             return;
