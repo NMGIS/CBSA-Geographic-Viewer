@@ -296,6 +296,7 @@ function highlightFeature(feature) {
 }
 
 function unhighlightFeature(feature) {
+    clearSidebar();
     map.setFeatureState(
         { source: feature.source, sourceLayer: feature.sourceLayer, id: feature.id },
         { clicked: false }
@@ -304,7 +305,11 @@ function unhighlightFeature(feature) {
 
 function clearSidebar() {
     const section1 = document.getElementById('section1');
+    const section2 = document.getElementById('section2');
+    const section3 = document.getElementById('section3');
     section1.innerHTML = '';
+    section2.innerHTML = '';
+    section3.innerHTML = '';
 }
 
 
