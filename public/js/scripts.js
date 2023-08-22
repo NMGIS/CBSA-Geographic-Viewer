@@ -312,9 +312,11 @@ function clearSidebar() {
     const section1 = document.getElementById('section1');
     const section2 = document.getElementById('section2');
     const section3 = document.getElementById('section3');
+    const section4 = document.getElementById('section4');
     section1.innerHTML = '';
     section2.innerHTML = '';
     section3.innerHTML = '';
+    section4.innerHTML = '';
 }
 
 
@@ -323,76 +325,175 @@ function populateSidebar(feature) {
     const section1 = document.getElementById('section1');
     const section2 = document.getElementById('section2');
     const section3 = document.getElementById('section3');
+    const section4 = document.getElementById('section4');
     section1.innerHTML = '';
     section2.innerHTML = '';
     section3.innerHTML = '';
+    section4.innerHTML = '';
 
     let section;
     switch (feature.layer.id) {
         case 'CSA_GeoJSON_Fill':
+            
             section = section1;
+            const csaName = feature.properties.NAME;
+            const nameElementCSA = document.createElement('h3');
+            nameElementCSA.innerText = csaName;
+            section.appendChild(nameElementCSA);
+
             // Lookup related Metro features using the CSAFP field
             const relatedMetroFeatures = map.querySourceFeatures('Metro_GeoJSON', {
                 filter: ['==', 'CSAFP', feature.properties.CSAFP]
             });
             const uniqueMetroNames = [...new Set(relatedMetroFeatures.map(f => f.properties.NAME))];
-            if (uniqueMetroNames.length) {
-                section2.innerHTML = '';  // Clear any previous content
-                uniqueMetroNames.forEach(name => {
-                    const nameElementMetro = document.createElement('h3');
-                    nameElementMetro.innerText = name;
-                    section2.appendChild(nameElementMetro);
-                });
-            }
+            uniqueMetroNames.forEach(name => {
+                const nameElementMetro = document.createElement('h3');
+                nameElementMetro.innerText = name;
+                section2.appendChild(nameElementMetro);
+            });
+
             // Lookup related Micro features using the CSAFP field
             const relatedMicroFeatures = map.querySourceFeatures('Micro_GeoJSON', {
                 filter: ['==', 'CSAFP', feature.properties.CSAFP]
             });
             const uniqueMicroNames = [...new Set(relatedMicroFeatures.map(f => f.properties.NAME))];
-            if (uniqueMicroNames.length) {
-                section3.innerHTML = '';  // Clear any previous content
-                uniqueMicroNames.forEach(name => {
-                    const nameElementMicro = document.createElement('h3');
-                    nameElementMicro.innerText = name;
-                    section3.appendChild(nameElementMicro);
-                });
-            }
+            uniqueMicroNames.forEach(name => {
+                const nameElementMicro = document.createElement('h3');
+                nameElementMicro.innerText = name;
+                section3.appendChild(nameElementMicro);
+            });
+            
+
+            // Populate related Place features for CSA
+            
+            const relatedPlacesForCSA = map.querySourceFeatures('Place', {
+                sourceLayer: 'Incorporated_Place_Related-1qqx0j',
+                filter: ['==', 'CSAFP', feature.properties.CSAFP]
+            });
+            const uniquePlaceNamesForCSA = [...new Set(relatedPlacesForCSA.map(f => f.properties.NAMELSAD))];
+            uniquePlaceNamesForCSA.forEach(name => {
+                const placeElement = document.createElement('h3');
+                placeElement.innerText = name;
+                section4.appendChild(placeElement);
+            });
+            
+            
             break;
+
         case 'Metro_GeoJSON_Layer':
             section = section2;
+            const metroName = feature.properties.NAME;
+            const nameElementMetro = document.createElement('h3');
+            nameElementMetro.innerText = metroName;
+            section.appendChild(nameElementMetro);
+
             // Lookup the corresponding CSA feature using the CSAFP field
             const csaFeatureMetro = map.querySourceFeatures('CSA_GeoJSON', {
                 filter: ['==', 'CSAFP', feature.properties.CSAFP]
             })[0];
             if (csaFeatureMetro) {
-                const nameElementCSA = document.createElement('h3');
-                nameElementCSA.innerText = csaFeatureMetro.properties.NAME;
-                section1.appendChild(nameElementCSA);
+                const nameElementCSAForMetro = document.createElement('h3');
+                nameElementCSAForMetro.innerText = csaFeatureMetro.properties.NAME;
+                section1.appendChild(nameElementCSAForMetro);
             }
+
+            // Populate related Place features for Metro
+            const relatedPlacesForMetro = map.querySourceFeatures('Place', {
+                sourceLayer: 'Incorporated_Place_Related-1qqx0j',
+                filter: ['==', 'CBSAFP', feature.properties.CBSAFP]
+            });
+            const uniquePlaceNamesForMetro = [...new Set(relatedPlacesForMetro.map(f => f.properties.NAMELSAD))];
+            uniquePlaceNamesForMetro.forEach(name => {
+                const placeElement = document.createElement('h3');
+                placeElement.innerText = name;
+                section4.appendChild(placeElement);
+            });
+            
+
             break;
+
         case 'Micro_GeoJSON_Layer':
             section = section3;
+            const microName = feature.properties.NAME;
+            const nameElementMicro = document.createElement('h3');
+            nameElementMicro.innerText = microName;
+            section.appendChild(nameElementMicro);
+
             // Lookup the corresponding CSA feature using the CSAFP field
             const csaFeatureMicro = map.querySourceFeatures('CSA_GeoJSON', {
                 filter: ['==', 'CSAFP', feature.properties.CSAFP]
             })[0];
             if (csaFeatureMicro) {
-                const nameElementCSA = document.createElement('h3');
-                nameElementCSA.innerText = csaFeatureMicro.properties.NAME;
-                section1.appendChild(nameElementCSA);
+                const nameElementCSAForMicro = document.createElement('h3');
+                nameElementCSAForMicro.innerText = csaFeatureMicro.properties.NAME;
+                section1.appendChild(nameElementCSAForMicro);
             }
-        
+
+            // Populate related Place features for Micro
+            const relatedPlacesForMicro = map.querySourceFeatures('Place', {
+                sourceLayer: 'Incorporated_Place_Related-1qqx0j',
+                filter: ['==', 'CBSAFP', feature.properties.CBSAFP]
+            });
+            const uniquePlaceNamesForMicro = [...new Set(relatedPlacesForMicro.map(f => f.properties.NAMELSAD))];
+            uniquePlaceNamesForMicro.forEach(name => {
+                const placeElement = document.createElement('h3');
+                placeElement.innerText = name;
+                section4.appendChild(placeElement);
+            });
             
+
             break;
+
+        case 'Place_Layer':
+            section = section4;
+            const placeName = feature.properties.NAMELSAD;
+            const nameElementPlace = document.createElement('h3');
+            nameElementPlace.innerText = placeName;
+            section.appendChild(nameElementPlace);
+
+            // Lookup related Metro or Micro features using the CBSAFP field
+            const relatedMetroForPlace = map.querySourceFeatures('Metro_GeoJSON', {
+                filter: ['==', 'CBSAFP', feature.properties.CBSAFP]
+            });
+            if (relatedMetroForPlace.length) {
+                section2.innerHTML = '';
+                const nameElementMetroForPlace = document.createElement('h3');
+                nameElementMetroForPlace.innerText = relatedMetroForPlace[0].properties.NAME;
+                section2.appendChild(nameElementMetroForPlace);
+
+                // Also populate the related CSA for the Metro
+                const csaForMetro = map.querySourceFeatures('CSA_GeoJSON', {
+                    filter: ['==', 'CSAFP', relatedMetroForPlace[0].properties.CSAFP]
+                });
+                if (csaForMetro.length) {
+                    const nameElementCSAForPlace = document.createElement('h3');
+                    nameElementCSAForPlace.innerText = csaForMetro[0].properties.NAME;
+                    section1.appendChild(nameElementCSAForPlace);
+                }
+            } else {
+                const relatedMicroForPlace = map.querySourceFeatures('Micro_GeoJSON', {
+                    filter: ['==', 'CBSAFP', feature.properties.CBSAFP]
+                });
+                if (relatedMicroForPlace.length) {
+                    section3.innerHTML = '';
+                    const nameElementMicroForPlace = document.createElement('h3');
+                    nameElementMicroForPlace.innerText = relatedMicroForPlace[0].properties.NAME;
+                    section3.appendChild(nameElementMicroForPlace);
+
+                    // Also populate the related CSA for the Micro
+                    const csaForMicro = map.querySourceFeatures('CSA_GeoJSON', {
+                        filter: ['==', 'CSAFP', relatedMicroForPlace[0].properties.CSAFP]
+                    });
+                    if (csaForMicro.length) {
+                        const nameElementCSAForMicroPlace = document.createElement('h3');
+                        nameElementCSAForMicroPlace.innerText = csaForMicro[0].properties.NAME;
+                        section1.appendChild(nameElementCSAForMicroPlace);
+                    }
+                }
+            }
+            break;
+
         default:
             return;
     }
-
-    const featureName = feature.properties.NAME; 
-    const nameElement = document.createElement('h3');
-    nameElement.innerText = featureName;
-    section.appendChild(nameElement);
 }
-
-
-
