@@ -365,15 +365,20 @@ function populateSidebar(feature) {
             
 
             // Populate related Place features for CSA
-            
             const relatedPlacesForCSA = map.querySourceFeatures('Place', {
                 sourceLayer: 'Incorporated_Place_Related-1qqx0j',
                 filter: ['==', 'CSAFP', feature.properties.CSAFP]
             });
-            const uniquePlaceNamesForCSA = [...new Set(relatedPlacesForCSA.map(f => f.properties.NAMELSAD))];
-            uniquePlaceNamesForCSA.forEach(name => {
+
+            // Map each feature to a string in the format "NAMELSAD Pop: TOTAL"
+            const placeInfoArray = relatedPlacesForCSA.map(feat => `${feat.properties.NAMELSAD} - Pop: ${feat.properties.TOTAL}`);
+
+            // Convert the array to a Set to get unique values
+            const uniquePlaceInfoForCSA = [...new Set(placeInfoArray)];
+
+            uniquePlaceInfoForCSA.forEach(placeInfo => {
                 const placeElement = document.createElement('h3');
-                placeElement.innerText = name;
+                placeElement.innerText = placeInfo;
                 section4.appendChild(placeElement);
             });
             
@@ -402,13 +407,19 @@ function populateSidebar(feature) {
                 sourceLayer: 'Incorporated_Place_Related-1qqx0j',
                 filter: ['==', 'CBSAFP', feature.properties.CBSAFP]
             });
-            const uniquePlaceNamesForMetro = [...new Set(relatedPlacesForMetro.map(f => f.properties.NAMELSAD))];
-            uniquePlaceNamesForMetro.forEach(name => {
+
+            // Map each feature to a string in the format "NAMELSAD Pop: TOTAL"
+            const placeInfoArrayForMetro = relatedPlacesForMetro.map(feat => `${feat.properties.NAMELSAD} - Pop: ${feat.properties.TOTAL}`);
+
+            // Convert the array to a Set to get unique values
+            const uniquePlaceInfoForMetro = [...new Set(placeInfoArrayForMetro)];
+
+            uniquePlaceInfoForMetro.forEach(placeInfo => {
                 const placeElement = document.createElement('h3');
-                placeElement.innerText = name;
+                placeElement.innerText = placeInfo;
                 section4.appendChild(placeElement);
             });
-            
+
 
             break;
 
@@ -434,19 +445,25 @@ function populateSidebar(feature) {
                 sourceLayer: 'Incorporated_Place_Related-1qqx0j',
                 filter: ['==', 'CBSAFP', feature.properties.CBSAFP]
             });
-            const uniquePlaceNamesForMicro = [...new Set(relatedPlacesForMicro.map(f => f.properties.NAMELSAD))];
-            uniquePlaceNamesForMicro.forEach(name => {
+
+            // Map each feature to a string in the format "NAMELSAD Pop: TOTAL"
+            const placeInfoArrayForMicro = relatedPlacesForMicro.map(feat => `${feat.properties.NAMELSAD} - Pop: ${feat.properties.TOTAL}`);
+
+            // Convert the array to a Set to get unique values
+            const uniquePlaceInfoForMicro = [...new Set(placeInfoArrayForMicro)];
+
+            uniquePlaceInfoForMicro.forEach(placeInfo => {
                 const placeElement = document.createElement('h3');
-                placeElement.innerText = name;
+                placeElement.innerText = placeInfo;
                 section4.appendChild(placeElement);
             });
-            
 
+        
             break;
 
         case 'Place_Layer':
             section = section4;
-            const placeName = feature.properties.NAMELSAD;
+            const placeName = `${feature.properties.NAMELSAD} - Pop: ${feature.properties.TOTAL}`;
             const nameElementPlace = document.createElement('h3');
             nameElementPlace.innerText = placeName;
             section.appendChild(nameElementPlace);
