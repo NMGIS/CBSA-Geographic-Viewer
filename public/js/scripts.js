@@ -1,5 +1,34 @@
 mapboxgl.accessToken = 'pk.eyJ1Ijoibm1naXMiLCJhIjoiY2xsZDFlZDcwMDVweDNlbDAydG81Mmk1eSJ9.h-IyelCFTJxaqXlTX2M-5w';
 
+const layerInteractivityState = {
+    'Metro_GeoJSON_Layer': true,
+    'Micro_GeoJSON_Layer': true,
+    'CSA_GeoJSON_Layer': true,
+    'CSA_GeoJSON_Fill': true,  // Add this line
+    'Place_Layer': true
+};
+
+// Get elements
+const infoButton = document.getElementById('info-button');
+const splashScreen = document.getElementById('splash-screen');
+const closeButton = document.getElementById('close-button');
+
+// Show splash screen when the info button is clicked
+infoButton.addEventListener('click', function() {
+  splashScreen.style.display = "block";
+});
+
+// Hide splash screen when the close button is clicked
+closeButton.addEventListener('click', function() {
+  splashScreen.style.display = "none";
+});
+
+// Show splash screen initially
+window.addEventListener('load', function() {
+  splashScreen.style.display = "block";
+});
+
+
 const map = new mapboxgl.Map({
     container: 'map', // container ID
     // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
@@ -153,7 +182,7 @@ map.on('load', function() {
         }
     });
     
-    
+
     // Legend for the layers
     const legendValues = [
         { label: 'Metropolitan statistical area', color: '#f7d797', type: 'fill', id: 'Metro_GeoJSON_Layer' },
@@ -177,10 +206,28 @@ map.on('load', function() {
         checkbox.style.marginRight = '10px';
         
         checkbox.addEventListener('change', function() {
-            if (this.checked) {
-                map.setLayoutProperty(item.id, 'visibility', 'visible');
+            // Special case for CSA layers
+            if (item.id === 'CSA_GeoJSON_Layer') {
+                if (this.checked) {
+                    map.setLayoutProperty('CSA_GeoJSON_Layer', 'visibility', 'visible');
+                    map.setLayoutProperty('CSA_GeoJSON_Fill', 'visibility', 'visible');
+                    layerInteractivityState['CSA_GeoJSON_Layer'] = true;
+                    layerInteractivityState['CSA_GeoJSON_Fill'] = true;
+                } else {
+                    map.setLayoutProperty('CSA_GeoJSON_Layer', 'visibility', 'none');
+                    map.setLayoutProperty('CSA_GeoJSON_Fill', 'visibility', 'none');
+                    layerInteractivityState['CSA_GeoJSON_Layer'] = false;
+                    layerInteractivityState['CSA_GeoJSON_Fill'] = false;
+                }
             } else {
-                map.setLayoutProperty(item.id, 'visibility', 'none');
+                // For all other layers
+                if (this.checked) {
+                    map.setLayoutProperty(item.id, 'visibility', 'visible');
+                    layerInteractivityState[item.id] = true;
+                } else {
+                    map.setLayoutProperty(item.id, 'visibility', 'none');
+                    layerInteractivityState[item.id] = false;
+                }
             }
         });
         row.appendChild(checkbox);
@@ -214,8 +261,6 @@ map.on('load', function() {
 
         legendEl.appendChild(row);
     });
-
-
 });
 
 
@@ -272,6 +317,10 @@ map.on('click', function(e) {
         const csaFeature = features.find(f => f.layer.id === 'CSA_GeoJSON_Fill');
         const clickedFeature = csaFeature || features[0];
 
+        // Check if interactions are disabled for the layer that this feature belongs to
+        if (!layerInteractivityState[clickedFeature.layer.id]) {
+            return;  // Exit if interactions for this layer are disabled
+        }
 
         if (previousFeature && previousFeature.id === clickedFeature.id) {
             // The same feature was clicked again, unselect it
@@ -320,7 +369,10 @@ function clearSidebar() {
 }
 
 
+let sidebarFeatures = [];
 function populateSidebar(feature) {
+    sidebarFeatures = [];
+    clearSidebar();
     // Clear all sections first
     const section1 = document.getElementById('section1');
     const section2 = document.getElementById('section2');
@@ -332,6 +384,7 @@ function populateSidebar(feature) {
     section4.innerHTML = '';
 
     let section;
+
     switch (feature.layer.id) {
         case 'CSA_GeoJSON_Fill':
             
@@ -341,10 +394,12 @@ function populateSidebar(feature) {
             nameElementCSA.innerText = csaName;
             section.appendChild(nameElementCSA);
 
+            
             // Lookup related Metro features using the CSAFP field
             const relatedMetroFeatures = map.querySourceFeatures('Metro_GeoJSON', {
                 filter: ['==', 'CSAFP', feature.properties.CSAFP]
             });
+            sidebarFeatures = sidebarFeatures.concat(relatedMetroFeatures);
             const uniqueMetroNames = [...new Set(relatedMetroFeatures.map(f => f.properties.NAME))];
             uniqueMetroNames.forEach(name => {
                 const nameElementMetro = document.createElement('h3');
@@ -356,6 +411,7 @@ function populateSidebar(feature) {
             const relatedMicroFeatures = map.querySourceFeatures('Micro_GeoJSON', {
                 filter: ['==', 'CSAFP', feature.properties.CSAFP]
             });
+            sidebarFeatures = sidebarFeatures.concat(relatedMicroFeatures);
             const uniqueMicroNames = [...new Set(relatedMicroFeatures.map(f => f.properties.NAME))];
             uniqueMicroNames.forEach(name => {
                 const nameElementMicro = document.createElement('h3');
@@ -369,7 +425,7 @@ function populateSidebar(feature) {
                 sourceLayer: 'Incorporated_Place_Related-1qqx0j',
                 filter: ['==', 'CSAFP', feature.properties.CSAFP]
             });
-
+            sidebarFeatures = sidebarFeatures.concat(relatedPlacesForCSA);
             // Map each feature to a string in the format "NAMELSAD Pop: TOTAL"
             const placeInfoArray = relatedPlacesForCSA.map(feat => `${feat.properties.NAMELSAD} - Pop: ${feat.properties.TOTAL}`);
 
@@ -400,6 +456,7 @@ function populateSidebar(feature) {
                 const nameElementCSAForMetro = document.createElement('h3');
                 nameElementCSAForMetro.innerText = csaFeatureMetro.properties.NAME;
                 section1.appendChild(nameElementCSAForMetro);
+                sidebarFeatures.push(csaFeatureMetro);
             }
 
             // Populate related Place features for Metro
@@ -407,7 +464,7 @@ function populateSidebar(feature) {
                 sourceLayer: 'Incorporated_Place_Related-1qqx0j',
                 filter: ['==', 'CBSAFP', feature.properties.CBSAFP]
             });
-
+            sidebarFeatures = sidebarFeatures.concat(relatedPlacesForMetro);
             // Map each feature to a string in the format "NAMELSAD Pop: TOTAL"
             const placeInfoArrayForMetro = relatedPlacesForMetro.map(feat => `${feat.properties.NAMELSAD} - Pop: ${feat.properties.TOTAL}`);
 
@@ -438,6 +495,7 @@ function populateSidebar(feature) {
                 const nameElementCSAForMicro = document.createElement('h3');
                 nameElementCSAForMicro.innerText = csaFeatureMicro.properties.NAME;
                 section1.appendChild(nameElementCSAForMicro);
+                sidebarFeatures.push(csaFeatureMicro);
             }
 
             // Populate related Place features for Micro
@@ -445,7 +503,7 @@ function populateSidebar(feature) {
                 sourceLayer: 'Incorporated_Place_Related-1qqx0j',
                 filter: ['==', 'CBSAFP', feature.properties.CBSAFP]
             });
-
+            sidebarFeatures = sidebarFeatures.concat(relatedPlacesForMicro);
             // Map each feature to a string in the format "NAMELSAD Pop: TOTAL"
             const placeInfoArrayForMicro = relatedPlacesForMicro.map(feat => `${feat.properties.NAMELSAD} - Pop: ${feat.properties.TOTAL}`);
 
@@ -477,7 +535,7 @@ function populateSidebar(feature) {
                 const nameElementMetroForPlace = document.createElement('h3');
                 nameElementMetroForPlace.innerText = relatedMetroForPlace[0].properties.NAME;
                 section2.appendChild(nameElementMetroForPlace);
-
+                sidebarFeatures = sidebarFeatures.concat(relatedMetroForPlace);
                 // Also populate the related CSA for the Metro
                 const csaForMetro = map.querySourceFeatures('CSA_GeoJSON', {
                     filter: ['==', 'CSAFP', relatedMetroForPlace[0].properties.CSAFP]
@@ -486,6 +544,7 @@ function populateSidebar(feature) {
                     const nameElementCSAForPlace = document.createElement('h3');
                     nameElementCSAForPlace.innerText = csaForMetro[0].properties.NAME;
                     section1.appendChild(nameElementCSAForPlace);
+                    sidebarFeatures = sidebarFeatures.concat(csaForMetro);
                 }
             } else {
                 const relatedMicroForPlace = map.querySourceFeatures('Micro_GeoJSON', {
@@ -496,6 +555,7 @@ function populateSidebar(feature) {
                     const nameElementMicroForPlace = document.createElement('h3');
                     nameElementMicroForPlace.innerText = relatedMicroForPlace[0].properties.NAME;
                     section3.appendChild(nameElementMicroForPlace);
+                    sidebarFeatures = sidebarFeatures.concat(relatedMicroForPlace);
 
                     // Also populate the related CSA for the Micro
                     const csaForMicro = map.querySourceFeatures('CSA_GeoJSON', {
@@ -505,6 +565,7 @@ function populateSidebar(feature) {
                         const nameElementCSAForMicroPlace = document.createElement('h3');
                         nameElementCSAForMicroPlace.innerText = csaForMicro[0].properties.NAME;
                         section1.appendChild(nameElementCSAForMicroPlace);
+                        sidebarFeatures = sidebarFeatures.concat(csaForMicro);
                     }
                 }
             }
@@ -513,4 +574,6 @@ function populateSidebar(feature) {
         default:
             return;
     }
+
 }
+
