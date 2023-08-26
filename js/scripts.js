@@ -577,3 +577,12 @@ function populateSidebar(feature) {
 
 }
 
+// Get references to the sidebar and the toggle button
+const sidebar = document.getElementById('sidebar');
+const toggleButton = document.getElementById('sidebar-toggle-button');
+
+// Add a click event listener to the toggle button
+toggleButton.addEventListener('click', function() {
+  // Toggle the 'collapsed' class on the sidebar
+  sidebar.classList.toggle('collapsed');
+});

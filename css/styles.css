@@ -18,7 +18,7 @@ width: 320px;
 height: calc(100% - 60px); /* This subtracts 20px from the height (10px for the top and 10px for the bottom) */
 top: 10px; /* This moves the sidebar 10px from the top of the container */
 bottom: 50px; /* This moves the sidebar 10px from the bottom of the container */
-left: 10px; /* This moves the sidebar 10px from the left of the container */
+left: 12px; /* This moves the sidebar 10px from the left of the container */
 background: #f8f9fa;
 border-radius: 12px; /* This rounds all corners */
 box-shadow: 0 0 10px rgba(0,0,0,0.3); /* This gives the shadow effect */
@@ -104,6 +104,7 @@ transform: translateY(-2px); /* slight upward shift on hover */
   padding: 10px;
   box-shadow: inset 0px 0px 10px rgba(0,0,0,0.2);
   border-radius: 8px;
+  min-height: 30px;
 }
 
 #section2, #section3 {
@@ -115,6 +116,7 @@ transform: translateY(-2px); /* slight upward shift on hover */
   padding: 10px;
   box-shadow: inset 0px 0px 10px rgba(0,0,0,0.2);
   border-radius: 8px;
+  min-height: 30px;
 }
 
 #section4 {
@@ -126,7 +128,24 @@ transform: translateY(-2px); /* slight upward shift on hover */
   padding: 10px;
   box-shadow: inset 0px 0px 10px rgba(0,0,0,0.2);
   border-radius: 8px;
+  min-height: 30px;
 }
+
+#sidebar-toggle-button {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  align-self: center;  /* Center the button horizontally */
+}
+
+#sidebar.collapsed {
+  height: 0;  
+  overflow: hidden;  
+  /* Add any other styles for the collapsed state here */
+}
+
   
 #section1 h3, #section2 h3, #section3 h3, #section4 h3 {
     margin-top: 5px;  /* space above each <h3> */
@@ -236,7 +255,8 @@ font-family: 'Gotham', sans-serif;
   border-radius: 15px;  /* Rounded corners */
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  /* Box shadow for 3D effect */
   font-family: 'Gotham', sans-serif;
-  
+  max-height: 80%;
+  overflow: auto;
 }
 
 .close-button {
