@@ -64,6 +64,18 @@ flex-direction: column;
 font-family: 'Gotham', sans-serif;
 }
 
+#legend div {
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+  #legend {
+    width: 200px;  
+    font-size: 12px; 
+  }
+}
 
 #map {
 flex-grow: 1;
