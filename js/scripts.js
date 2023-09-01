@@ -313,34 +313,44 @@ map.on('click', function(e) {
     });
 
     if (features.length) {
-        // Check if any of the features are from the CSA fill layer
         const csaFeature = features.find(f => f.layer.id === 'CSA_GeoJSON_Fill');
         const clickedFeature = csaFeature || features[0];
 
-        // Check if interactions are disabled for the layer that this feature belongs to
         if (!layerInteractivityState[clickedFeature.layer.id]) {
-            return;  // Exit if interactions for this layer are disabled
+            return;
         }
+
+        const popupElement = document.getElementById('mobile-popup');
 
         if (previousFeature && previousFeature.id === clickedFeature.id) {
             // The same feature was clicked again, unselect it
             clearSidebar();
             unhighlightFeature(previousFeature);
             previousFeature = null;
+
+            // Hide the popup
+            popupElement.innerHTML = '';
+            popupElement.classList.add('popup-hidden');  // Hide the popup
         } else {
             // A different feature was clicked
             if (previousFeature) {
-                // Unhighlight the previously clicked feature
                 unhighlightFeature(previousFeature);
             }
             
-            // Highlight the new feature
             highlightFeature(clickedFeature);
             populateSidebar(clickedFeature);
+
+            // Show the popup for mobile
+            if (window.innerWidth <= 768) {
+                populateMobilePopup(clickedFeature);
+            }
+
             previousFeature = clickedFeature;
         }
     }
 });
+
+
 
 function highlightFeature(feature) {
     map.setFeatureState(
@@ -586,3 +596,214 @@ toggleButton.addEventListener('click', function() {
   // Toggle the 'collapsed' class on the sidebar
   sidebar.classList.toggle('collapsed');
 });
+
+
+
+function populateMobilePopup(feature) {
+    const popupElement = document.getElementById('mobile-popup');
+    popupElement.innerHTML = '';  // Clear the existing popup content
+
+    let section;
+    let header;
+
+    switch (feature.layer.id) {
+        case 'CSA_GeoJSON_Fill':
+            section = document.createElement('div');
+            const csaName = feature.properties.NAME;
+            const nameElementCSA = document.createElement('h3');
+            nameElementCSA.innerHTML = "<strong>CSA:</strong> " + csaName;
+            section.appendChild(nameElementCSA);
+
+            const popupSectionMetro = document.createElement('div');
+            const popupSectionMicro = document.createElement('div');
+            const popupSectionPlace = document.createElement('div');
+            
+            const relatedMetroFeatures = map.querySourceFeatures('Metro_GeoJSON', {
+                filter: ['==', 'CSAFP', feature.properties.CSAFP]
+            });
+            const uniqueMetroNames = [...new Set(relatedMetroFeatures.map(f => f.properties.NAME))];
+            uniqueMetroNames.forEach(name => {
+                const nameElementMetro = document.createElement('h3');
+                nameElementMetro.innerHTML = "<strong>MSA:</strong> " + name;
+                popupSectionMetro.appendChild(nameElementMetro);
+            });
+        
+            // For Micro features
+            const relatedMicroFeatures = map.querySourceFeatures('Micro_GeoJSON', {
+                filter: ['==', 'CSAFP', feature.properties.CSAFP]
+            });
+            const uniqueMicroNames = [...new Set(relatedMicroFeatures.map(f => f.properties.NAME))];
+            uniqueMicroNames.forEach(name => {
+                const nameElementMicro = document.createElement('h3');
+                nameElementMicro.innerHTML = "<strong>&mu;SA:</strong> " + name;
+                popupSectionMicro.appendChild(nameElementMicro);
+            });
+        
+            // For Place features
+            const relatedPlacesForCSA = map.querySourceFeatures('Place', {
+                sourceLayer: 'Incorporated_Place_Related-1qqx0j',
+                filter: ['==', 'CSAFP', feature.properties.CSAFP]
+            });
+            const placeInfoArray = relatedPlacesForCSA.map(feat => `${feat.properties.NAMELSAD} - Pop: ${feat.properties.TOTAL}`);
+            const uniquePlaceInfoForCSA = [...new Set(placeInfoArray)];
+            uniquePlaceInfoForCSA.forEach(placeInfo => {
+                const placeElement = document.createElement('h3');
+                placeElement.innerText = placeInfo;
+                popupSectionPlace.appendChild(placeElement);
+            });
+        
+            // Append these new divs to the main 'section'
+            section.appendChild(popupSectionMetro);
+            section.appendChild(popupSectionMicro);
+            section.appendChild(popupSectionPlace);
+        
+            // Append the main 'section' to the popup
+            popupElement.appendChild(section);
+            popupElement.classList.remove('popup-hidden');  // Show the popup
+        
+            break;
+
+        case 'Metro_GeoJSON_Layer':
+            section = document.createElement('div');  // Create a new div for the main section
+        
+            // Subsections for Metro, CSA, and Place within the popup
+            const popupSectionCSAForMetro = document.createElement('div');
+            const popupSectionPlaceForMetro = document.createElement('div');
+        
+            const metroName = feature.properties.NAME;
+            const nameElementMetro = document.createElement('h3');
+            nameElementMetro.innerHTML = "<strong>MSA:</strong> " + metroName;
+            section.appendChild(nameElementMetro);
+        
+            // Lookup the corresponding CSA feature using the CSAFP field
+            const csaFeatureMetro = map.querySourceFeatures('CSA_GeoJSON', {
+                filter: ['==', 'CSAFP', feature.properties.CSAFP]
+            })[0];
+            if (csaFeatureMetro) {
+                const nameElementCSAForMetro = document.createElement('h3');
+                nameElementCSAForMetro.innerText = csaFeatureMetro.properties.NAME;
+                popupSectionCSAForMetro.appendChild(nameElementCSAForMetro);
+            }
+        
+            // Populate related Place features for Metro
+            const relatedPlacesForMetro = map.querySourceFeatures('Place', {
+                sourceLayer: 'Incorporated_Place_Related-1qqx0j',
+                filter: ['==', 'CBSAFP', feature.properties.CBSAFP]
+            });
+            const placeInfoArrayForMetro = relatedPlacesForMetro.map(feat => `${feat.properties.NAMELSAD} - Pop: ${feat.properties.TOTAL}`);
+            const uniquePlaceInfoForMetro = [...new Set(placeInfoArrayForMetro)];
+        
+            uniquePlaceInfoForMetro.forEach(placeInfo => {
+                const placeElement = document.createElement('h3');
+                placeElement.innerText = placeInfo;
+                popupSectionPlaceForMetro.appendChild(placeElement);
+            });
+        
+            // Append these new divs to the main 'section'
+            section.appendChild(popupSectionCSAForMetro);
+            section.appendChild(popupSectionPlaceForMetro);
+        
+            // Append the main 'section' to the popup
+            popupElement.appendChild(section);
+            popupElement.classList.remove('popup-hidden');  // Show the popup
+        
+            break;
+            
+
+        case 'Micro_GeoJSON_Layer':
+            section = document.createElement('div');  // Create a new div for the main section
+        
+            // Subsections for Micro, CSA, and Place within the popup
+            const popupSectionCSAForMicro = document.createElement('div');
+            const popupSectionPlaceForMicro = document.createElement('div');
+        
+            const microName = feature.properties.NAME;
+            const nameElementMicro = document.createElement('h3');
+            nameElementMicro.innerHTML = "<strong>&mu;SA:</strong> " + microName;
+            section.appendChild(nameElementMicro);
+        
+            // Lookup the corresponding CSA feature using the CSAFP field
+            const csaFeatureMicro = map.querySourceFeatures('CSA_GeoJSON', {
+                filter: ['==', 'CSAFP', feature.properties.CSAFP]
+            })[0];
+            if (csaFeatureMicro) {
+                const nameElementCSAForMicro = document.createElement('h3');
+                nameElementCSAForMicro.innerText = csaFeatureMicro.properties.NAME;
+                popupSectionCSAForMicro.appendChild(nameElementCSAForMicro);
+            }
+        
+            // Populate related Place features for Micro
+            const relatedPlacesForMicro = map.querySourceFeatures('Place', {
+                sourceLayer: 'Incorporated_Place_Related-1qqx0j',
+                filter: ['==', 'CBSAFP', feature.properties.CBSAFP]
+            });
+            const placeInfoArrayForMicro = relatedPlacesForMicro.map(feat => `${feat.properties.NAMELSAD} - Pop: ${feat.properties.TOTAL}`);
+            const uniquePlaceInfoForMicro = [...new Set(placeInfoArrayForMicro)];
+        
+            uniquePlaceInfoForMicro.forEach(placeInfo => {
+                const placeElement = document.createElement('h3');
+                placeElement.innerText = placeInfo;
+                popupSectionPlaceForMicro.appendChild(placeElement);
+            });
+        
+            // Append these new divs to the main 'section'
+            section.appendChild(popupSectionCSAForMicro);
+            section.appendChild(popupSectionPlaceForMicro);
+        
+            // Append the main 'section' to the popup
+            popupElement.appendChild(section);
+            popupElement.classList.remove('popup-hidden');  // Show the popup
+        
+            break;
+            
+
+        case 'Place_Layer':
+            section = document.createElement('div');  // Create a new div for the main section
+        
+            // Subsections for Place, Metro, and Micro within the popup
+            const popupSectionMetroForPlace = document.createElement('div');
+            const popupSectionMicroForPlace = document.createElement('div');
+        
+            const placeName = `${feature.properties.NAMELSAD} - Pop: ${feature.properties.TOTAL}`;
+            const nameElementPlace = document.createElement('h3');
+            nameElementPlace.innerText = placeName;
+            section.appendChild(nameElementPlace);
+        
+            // Lookup related Metro features using the CBSAFP field
+            const relatedMetroForPlace = map.querySourceFeatures('Metro_GeoJSON', {
+                filter: ['==', 'CBSAFP', feature.properties.CBSAFP]
+            });
+            if (relatedMetroForPlace.length) {
+                const nameElementMetroForPlace = document.createElement('h3');
+                nameElementMetroForPlace.innerText = relatedMetroForPlace[0].properties.NAME;
+                popupSectionMetroForPlace.appendChild(nameElementMetroForPlace);
+            } else {
+                // Lookup related Micro features using the CBSAFP field
+                const relatedMicroForPlace = map.querySourceFeatures('Micro_GeoJSON', {
+                    filter: ['==', 'CBSAFP', feature.properties.CBSAFP]
+                });
+                if (relatedMicroForPlace.length) {
+                    const nameElementMicroForPlace = document.createElement('h3');
+                    nameElementMicroForPlace.innerText = relatedMicroForPlace[0].properties.NAME;
+                    popupSectionMicroForPlace.appendChild(nameElementMicroForPlace);
+                }
+            }
+        
+            // Append these new divs to the main 'section'
+            section.appendChild(popupSectionMetroForPlace);
+            section.appendChild(popupSectionMicroForPlace);
+        
+            // Append the main 'section' to the popup
+            popupElement.appendChild(section);
+            popupElement.classList.remove('popup-hidden');  // Show the popup
+        
+            break;
+            
+
+        default:
+            return;
+    }
+
+    popupElement.appendChild(section);
+    popupElement.classList.remove('popup-hidden');  // Show the popup
+}

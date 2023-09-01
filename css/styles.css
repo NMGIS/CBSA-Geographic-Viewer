@@ -227,6 +227,14 @@ font-family: 'Gotham', sans-serif;
   border: 1px solid #000000;
 }
 
+@media (max-width: 768px) {
+  .info-button {
+    top: auto !important;  
+    bottom: 9px !important; 
+    right: 9px !important;
+    z-index: 9999;
+  }
+}
 
 /* Splash screen */
 .splash-screen {
@@ -288,3 +296,41 @@ font-family: 'Gotham', sans-serif;
   color: #0077cc;          /* Change color on hover */
 }
 
+@media (max-width: 768px) {
+  #sidebar {
+    display: none;
+  }
+}
+
+#mobile-popup {
+  display: none;
+  position: absolute;
+  bottom: 35px;
+  left: 10px;  /* Change from right to left for bottom-left corner */
+  z-index: 2;  /* To appear above the map */
+  background-color: #fff;
+  padding: 5px;  /* Reduce padding to make the popup smaller */
+  border-radius: 3px;  /* Smaller radius */
+  box-shadow: 0 0 5px rgba(0,0,0,0.3);  /* Smaller shadow */
+  font-size: 12px;  /* Smaller font-size */
+  max-width: 200px;  /* Limit the width */
+  max-height: 200px;  /* Limit the height */
+  overflow-y: auto;  /* Add scroll if content overflows */
+  font-family: 'Gotham', sans-serif;
+}
+
+/* Media query to show popup only on mobile */
+@media (max-width: 768px) {
+  #mobile-popup {
+    display: block;
+  }
+}
+
+#mobile-popup h3 {
+  font-weight: normal;
+}
+
+/* Class to hide the popup when needed */
+.popup-hidden {
+  display: none !important;
+}
