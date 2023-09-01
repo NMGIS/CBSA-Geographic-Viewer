@@ -635,7 +635,7 @@ function populateMobilePopup(feature) {
             const uniqueMicroNames = [...new Set(relatedMicroFeatures.map(f => f.properties.NAME))];
             uniqueMicroNames.forEach(name => {
                 const nameElementMicro = document.createElement('h3');
-                nameElementMicro.innerHTML = "<strong>&mu;SA:</strong> " + name;
+                nameElementMicro.innerHTML = "<strong>&#x3BC;SA:</strong> " + name;
                 popupSectionMicro.appendChild(nameElementMicro);
             });
         
@@ -719,7 +719,7 @@ function populateMobilePopup(feature) {
         
             const microName = feature.properties.NAME;
             const nameElementMicro = document.createElement('h3');
-            nameElementMicro.innerHTML = "<strong>&mu;SA:</strong> " + microName;
+            nameElementMicro.innerHTML = "<strong>&#x3BC;SA:</strong> " + microName;
             section.appendChild(nameElementMicro);
         
             // Lookup the corresponding CSA feature using the CSAFP field
