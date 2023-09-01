@@ -61,7 +61,7 @@ padding-left: 8px;
 padding-right: 8px;
 display: flex;
 flex-direction: column;
-font-family: 'Montserrat', sans-serif;
+font-family: 'Roboto', sans-serif;
 z-index: 1000;
 color: #000;
 }
@@ -168,13 +168,13 @@ transform: translateY(-2px); /* slight upward shift on hover */
     border: 1px solid #ddd;
     padding: 5px;
     transition: background-color 0.3s;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Roboto', sans-serif;
 }
 
 #title1, #title2, #title3, #title4 {
   color: #000000; 
   padding: 2px 5px; 
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 #state-selector {
@@ -195,7 +195,7 @@ padding: 5px;
 border-radius: 5px;
 border: 1px solid #b0b0b0;
 background-color: #f8f9fa;
-font-family: 'Montserrat', sans-serif;
+font-family: 'Roboto', sans-serif;
 
 }
 
@@ -276,7 +276,7 @@ font-family: 'Montserrat', sans-serif;
   max-width: 800px;  /* Maximum width */
   border-radius: 15px;  /* Rounded corners */
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);  /* Box shadow for 3D effect */
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Roboto', sans-serif;
   max-height: 80%;
   overflow: auto;
 }
@@ -330,7 +330,7 @@ font-family: 'Montserrat', sans-serif;
   max-width: 200px;  /* Limit the width */
   max-height: 200px;  /* Limit the height */
   overflow-y: auto;  /* Add scroll if content overflows */
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 /* Media query to show popup only on mobile */
