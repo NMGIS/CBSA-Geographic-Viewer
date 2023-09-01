@@ -681,7 +681,7 @@ function populateMobilePopup(feature) {
             })[0];
             if (csaFeatureMetro) {
                 const nameElementCSAForMetro = document.createElement('h3');
-                nameElementCSAForMetro.innerText = csaFeatureMetro.properties.NAME;
+                nameElementCSAForMetro.innerHTML = "<strong>CSA:</strong> " + csaFeatureMetro.properties.NAME;
                 popupSectionCSAForMetro.appendChild(nameElementCSAForMetro);
             }
         
@@ -728,7 +728,7 @@ function populateMobilePopup(feature) {
             })[0];
             if (csaFeatureMicro) {
                 const nameElementCSAForMicro = document.createElement('h3');
-                nameElementCSAForMicro.innerText = csaFeatureMicro.properties.NAME;
+                nameElementCSAForMicro.innerHTML = "<strong>CSA:</strong> " + csaFeatureMicro.properties.NAME;
                 popupSectionCSAForMicro.appendChild(nameElementCSAForMicro);
             }
         

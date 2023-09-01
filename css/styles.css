@@ -55,7 +55,7 @@ right: 10px;
 background: #f8f9fa;
 border-radius: 12px;
 box-shadow: 0 0 10px rgba(0,0,0,0.3);
-overflow: auto;
+overflow: visible;
 padding-top: 8px;
 padding-left: 8px;
 padding-right: 8px;
@@ -63,11 +63,11 @@ display: flex;
 flex-direction: column;
 font-family: 'Gotham', sans-serif;
 z-index: 1000;
+color: #000;
 }
 
 #legend div {
   white-space: normal;
-  overflow: hidden;
   text-overflow: ellipsis;
 }
 
@@ -172,7 +172,7 @@ transform: translateY(-2px); /* slight upward shift on hover */
 }
 
 #title1, #title2, #title3, #title4 {
-  color: #000000;  /* White text color for readability */
+  color: #000000; 
   padding: 2px 5px; 
   font-family: 'Gotham', sans-serif;
 }
