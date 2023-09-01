@@ -62,6 +62,7 @@ padding-right: 8px;
 display: flex;
 flex-direction: column;
 font-family: 'Gotham', sans-serif;
+z-index: 1000;
 }
 
 #legend div {
