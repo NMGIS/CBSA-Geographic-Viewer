@@ -31,7 +31,6 @@ window.addEventListener('load', function() {
 
 const map = new mapboxgl.Map({
     container: 'map', // container ID
-    // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
     style: 'mapbox://styles/nmgis/clle6s78z00gu01rd16or251q', // style URL
     center: [-98, 39], // starting position [lng, lat]
     zoom: 5 // starting zoom
@@ -47,14 +46,14 @@ map.on('load', function() {
 
     map.addLayer({
         'id': 'Metro_GeoJSON_Layer',
-        'type': 'fill', // Can be 'fill', 'line', 'circle', 'symbol', etc. based on your data
+        'type': 'fill', 
         'source': 'Metro_GeoJSON',
         'layout': {},
         'paint': {
             'fill-color': ['case',
                 ['boolean', ['feature-state', 'clicked'], false],
-                '#38F6F3',  // Color to use when the feature is clicked
-                '#f7d797'  // Default color
+                '#38F6F3', 
+                '#f7d797'  
             ],
             'fill-opacity': 0.7,
             'fill-outline-color': '#4f4e4d'
@@ -145,18 +144,18 @@ map.on('load', function() {
 
     map.addLayer({
         'id': 'Place_Layer',
-        'type': 'fill', // Can be 'fill', 'line', 'circle', 'symbol', etc. based on your data
+        'type': 'fill', 
         'source': 'Place',
-        'source-layer': 'Incorporated_Place_Related-1qqx0j', // This is usually the name of your tileset
+        'source-layer': 'Incorporated_Place_Related-1qqx0j',
         'layout': {},
-        'minzoom': 5,  // The layer will become visible starting at this zoom level
-        'maxzoom': 22, // The layer will become invisible after this zoom level
+        'minzoom': 5,  
+        'maxzoom': 22, 
         'paint': {
             'fill-color': [
                 'case',
                 ['boolean', ['feature-state', 'clicked'], false],
-                '#38F6F3',  // Color when clicked (change this to your preferred highlight color)
-                '#8c8c8c'   // Default color
+                '#38F6F3',  
+                '#8c8c8c'   
             ],
             'fill-opacity': 0.7,
             'fill-outline-color': '#8c8c8c'
@@ -165,20 +164,20 @@ map.on('load', function() {
     // Add the StatesSimple.geojson source
     map.addSource('StatesSimple', {
         'type': 'geojson',
-        'data': './layers/StatesSimple.geojson'  // Assuming the geojson file is located in a directory named "layers"
+        'data': './layers/StatesSimple.geojson'  
     });
 
     // Add the layer for StatesSimple
     map.addLayer({
         'id': 'StatesSimple_Layer',
-        'type': 'fill',  // This can be changed based on the type of geometries in the geojson
+        'type': 'fill',  
         'source': 'StatesSimple',
         'layout': {
-            'visibility': 'none'  // This will ensure the layer is not visible
+            'visibility': 'none'  
         },
         'paint': {
-            'fill-color': '#000000',  // Dummy value since it's invisible
-            'fill-opacity': 0  // Fully transparent
+            'fill-color': '#000000',  
+            'fill-opacity': 0  
         }
     });
     
@@ -202,7 +201,7 @@ map.on('load', function() {
 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
-        checkbox.checked = true;  // Default to checked since layers are visible by default
+        checkbox.checked = true;  
         checkbox.style.marginRight = '10px';
         
         checkbox.addEventListener('change', function() {
@@ -286,7 +285,7 @@ fetch('./layers/StatesSimple.geojson')
         const stateName = feature.properties.NAME;
         const option = document.createElement('option');
         option.innerText = stateName;
-        option.value = JSON.stringify(feature); // Store the feature as string in the option's value
+        option.value = JSON.stringify(feature); 
         stateDropdown.appendChild(option);
     });
 
@@ -305,7 +304,7 @@ fetch('./layers/StatesSimple.geojson')
 
 
 // selecting features
-let previousFeature = null;  // Store the entire previous feature instead of just its ID
+let previousFeature = null;  
 
 map.on('click', function(e) {
     const features = map.queryRenderedFeatures(e.point, {
